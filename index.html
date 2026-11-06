@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Omnivo: one studio, every kind of app</title>
+<meta name="description" content="Omnivo is an independent studio making simple, honest apps for iPhone and Apple Watch. Our first app is Forge, a free workout tracker.">
+<meta property="og:title" content="Omnivo">
+<meta property="og:description" content="One studio. Every kind of app. Simple, honest apps for iPhone and Apple Watch.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#F5F6FA">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%2317192E'/%3E%3Cg fill='none' stroke-width='12' stroke-linecap='round'%3E%3Cpath d='M56 20a31 31 0 0 1 24 24' stroke='%237C5CFF'/%3E%3Cpath d='M80 56a31 31 0 0 1-24 24' stroke='%233B82F6'/%3E%3Cpath d='M44 80a31 31 0 0 1-24-24' stroke='%2314B8A6'/%3E%3Cpath d='M20 44a31 31 0 0 1 24-24' stroke='%23FF6B4A'/%3E%3C/g%3E%3Ccircle cx='50' cy='50' r='6' fill='%23fff'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #F5F6FA;
+    --white: #FFFFFF;
+    --ink: #17192E;
+    --ink-soft: #4A4E6A;
+    --line: #DFE2EC;
+    --violet: #7C5CFF;
+    --blue: #3B82F6;
+    --teal: #14B8A6;
+    --coral: #FF6B4A;
+    --radius-l: 28px;
+    --radius-s: 12px;
+    --wrap: 1120px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "Bricolage Grotesque", system-ui, -apple-system, sans-serif;
+    font-optical-sizing: auto;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  img { max-width: 100%; display: block; }
+  :focus-visible { outline: 3px solid var(--blue); outline-offset: 3px; border-radius: 6px; }
+  .wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 24px; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+  /* ---------- Header ---------- */
+  header.site {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(245, 246, 250, 0.86);
+    backdrop-filter: saturate(1.4) blur(14px);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid transparent;
+    transition: border-color .2s;
+  }
+  header.site.scrolled { border-bottom-color: var(--line); }
+  .bar { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 1.3rem; letter-spacing: -0.02em; }
+  .brand svg { width: 30px; height: 30px; }
+  nav.main { display: flex; align-items: center; gap: 6px; }
+  nav.main > a, .apps-toggle {
+    font: inherit; font-size: 0.98rem; font-weight: 500; color: var(--ink);
+    background: none; border: 0; cursor: pointer; text-decoration: none;
+    padding: 8px 14px; border-radius: 999px;
+  }
+  nav.main > a:hover, .apps-toggle:hover, .apps-toggle[aria-expanded="true"] { background: rgba(23, 25, 46, 0.06); }
+  .apps-menu { position: relative; }
+  .apps-toggle { display: inline-flex; align-items: center; gap: 6px; }
+  .apps-toggle svg { width: 12px; height: 12px; transition: transform .2s; }
+  .apps-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+  .apps-panel {
+    position: absolute; top: calc(100% + 10px); right: 0;
+    width: 320px; padding: 8px;
+    background: var(--white); border: 1px solid var(--line); border-radius: 20px;
+    box-shadow: 0 24px 60px -20px rgba(23, 25, 46, 0.35);
+    opacity: 0; transform: translateY(-6px); pointer-events: none;
+    transition: opacity .16s, transform .16s;
+  }
+  .apps-panel.open { opacity: 1; transform: none; pointer-events: auto; }
+  .apps-panel a, .apps-panel .soon {
+    display: flex; gap: 12px; align-items: center; padding: 10px; border-radius: 14px; text-decoration: none;
+  }
+  .apps-panel a:hover, .apps-panel a:focus-visible { background: var(--paper); }
+  .apps-panel img { width: 44px; height: 44px; border-radius: 11px; }
+  .apps-panel strong { display: block; font-weight: 600; }
+  .apps-panel small { color: var(--ink-soft); font-size: 0.86rem; }
+  .apps-panel .soon { color: var(--ink-soft); }
+  .slot-icon { width: 44px; height: 44px; border-radius: 11px; border: 2px dashed var(--line); flex: none; }
+
+  /* ---------- Hero ---------- */
+  .hero { padding: 72px 0 96px; }
+  .hero-grid { display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 48px; align-items: center; }
+  h1 {
+    font-size: clamp(3rem, 7.2vw, 6.1rem);
+    line-height: 0.95; letter-spacing: -0.045em; font-weight: 800;
+    margin: 0 0 28px;
+  }
+  h1 .line { display: block; }
+  .lede { font-size: 1.25rem; color: var(--ink-soft); max-width: 30em; margin: 0 0 36px; }
+  .actions { display: flex; flex-wrap: wrap; gap: 12px; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    font: inherit; font-weight: 600; font-size: 1rem; text-decoration: none; cursor: pointer;
+    padding: 14px 22px; border-radius: 999px; border: 1.5px solid var(--ink);
+  }
+  .btn.solid { background: var(--ink); color: var(--white); }
+  .btn.solid:hover { background: #2A2D48; }
+  .btn.ghost { background: transparent; color: var(--ink); }
+  .btn.ghost:hover { background: var(--white); }
+
+  /* The ring: one arc per app slot */
+  .ring-stage { position: relative; aspect-ratio: 1; max-width: 520px; margin-left: auto; width: 100%; }
+  .ring-stage svg { width: 100%; height: 100%; overflow: visible; }
+  .arc { fill: none; stroke-width: 20; stroke-linecap: round; cursor: pointer; transition: stroke-width .2s, opacity .2s; }
+  .arc.empty { opacity: 0.3; }
+  .arc:hover, .arc:focus-visible { stroke-width: 25; opacity: 1; outline: none; }
+  .ring-core { fill: var(--ink); }
+  .arc-label {
+    position: absolute; font-size: 0.95rem; font-weight: 600; line-height: 1.25;
+    pointer-events: none; white-space: nowrap;
+  }
+  .arc-label small { display: block; font-weight: 500; color: var(--ink-soft); font-size: 0.82rem; }
+  .arc-label.l-coral { left: 2%; top: 4%; }
+  .arc-label.l-violet { right: 0; top: 4%; text-align: right; }
+  .arc-label.l-blue { right: 0; bottom: 3%; text-align: right; }
+  .arc-label.l-teal { left: 2%; bottom: 3%; }
+  .dot { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 7px; vertical-align: 1px; }
+
+  /* Load sequence: the arcs draw in, one after another */
+  @media (prefers-reduced-motion: no-preference) {
+    .arc { stroke-dasharray: 210; stroke-dashoffset: 210; animation: draw .9s cubic-bezier(.6,.05,.25,1) forwards; }
+    .arc:nth-of-type(1) { animation-delay: .15s; }
+    .arc:nth-of-type(2) { animation-delay: .35s; }
+    .arc:nth-of-type(3) { animation-delay: .55s; }
+    .arc:nth-of-type(4) { animation-delay: .75s; }
+    .ring-core { transform-origin: 200px 200px; transform: scale(0); animation: pop .5s 1.25s cubic-bezier(.3,1.6,.5,1) forwards; }
+    .arc-label { opacity: 0; animation: fade .5s 1.4s forwards; }
+    @keyframes draw { to { stroke-dashoffset: 0; } }
+    @keyframes pop { to { transform: scale(1); } }
+    @keyframes fade { to { opacity: 1; } }
+  }
+
+  /* ---------- Sections ---------- */
+  section.block { padding: 104px 0; scroll-margin-top: 40px; }
+  h2 { font-size: clamp(2.2rem, 4.4vw, 3.4rem); line-height: 1.02; letter-spacing: -0.035em; font-weight: 800; margin: 0 0 18px; }
+  .intro { color: var(--ink-soft); font-size: 1.15rem; max-width: 34em; margin: 0 0 44px; }
+
+  /* App explorer */
+  #apps { background: var(--ink); color: var(--white); border-radius: 44px 44px 0 0; }
+  #apps .intro { color: #B7BAD3; }
+  .picker { position: relative; display: inline-block; margin-bottom: 36px; }
+  .picker-btn {
+    display: flex; align-items: center; gap: 14px; width: 380px;
+    font: inherit; color: var(--ink); background: var(--white); cursor: pointer;
+    border: 0; border-radius: 20px; padding: 12px 18px 12px 12px; text-align: left;
+  }
+  .picker-btn img, .picker-btn .slot-icon { width: 48px; height: 48px; border-radius: 12px; }
+  .picker-btn strong { display: block; font-size: 1.15rem; font-weight: 700; }
+  .picker-btn small { color: var(--ink-soft); }
+  .picker-btn .chev { margin-left: auto; width: 14px; height: 14px; transition: transform .2s; }
+  .picker-btn[aria-expanded="true"] .chev { transform: rotate(180deg); }
+  .picker-list {
+    position: absolute; z-index: 5; top: calc(100% + 8px); left: 0; right: 0;
+    margin: 0; padding: 8px; list-style: none;
+    background: var(--white); color: var(--ink); border-radius: 20px;
+    box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.6);
+  }
+  .picker-list[hidden] { display: none; }
+  .picker-list li { display: flex; align-items: center; gap: 12px; padding: 10px; border-radius: 14px; cursor: pointer; }
+  .picker-list li img, .picker-list li .slot-icon { width: 40px; height: 40px; border-radius: 10px; }
+  .picker-list li strong { display: block; font-weight: 600; }
+  .picker-list li small { color: var(--ink-soft); font-size: 0.86rem; }
+  .picker-list li.active, .picker-list li:hover { background: var(--paper); }
+  .picker-list li[aria-selected="true"] strong::after { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--teal); margin-left: 8px; vertical-align: 2px; }
+
+  .showcase {
+    display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center;
+    background: #21243D; border-radius: var(--radius-l); padding: 56px; min-height: 520px;
+  }
+  .show-head { display: flex; align-items: center; gap: 18px; margin-bottom: 22px; }
+  .show-head img { width: 76px; height: 76px; border-radius: 18px; }
+  .show-head h3 { font-size: 2.6rem; letter-spacing: -0.035em; line-height: 1; margin: 0; font-weight: 800; }
+  .show-head p { margin: 6px 0 0; color: #B7BAD3; }
+  .status {
+    display: inline-flex; align-items: center; gap: 8px; font-size: 0.92rem; font-weight: 600;
+    padding: 6px 12px; border-radius: 999px; background: rgba(255,255,255,.08); margin-bottom: 22px;
+  }
+  .status::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--accent, var(--teal)); }
+  .show-copy p.desc { font-size: 1.2rem; color: #E4E6F3; margin: 0 0 26px; max-width: 30em; }
+  .facts { list-style: none; padding: 0; margin: 0 0 34px; display: grid; gap: 12px; }
+  .facts li { display: flex; gap: 12px; color: #D3D6EA; }
+  .facts li::before { content: ""; flex: none; width: 14px; height: 4px; border-radius: 4px; margin-top: 12px; background: var(--accent, var(--teal)); }
+  #apps .btn.solid { background: var(--white); color: var(--ink); border-color: var(--white); }
+  #apps .btn.solid:hover { background: #E9EAF2; }
+  #apps .btn.ghost { color: var(--white); border-color: rgba(255,255,255,.4); }
+  #apps .btn.ghost:hover { background: rgba(255,255,255,.08); }
+  .phone {
+    justify-self: center; width: min(300px, 100%); aspect-ratio: 720 / 1565;
+    border-radius: 44px; padding: 10px; background: #0A0B16;
+    box-shadow: 0 40px 80px -30px rgba(0,0,0,.7), inset 0 0 0 2px #34385A;
+  }
+  .phone img { width: 100%; height: 100%; object-fit: cover; border-radius: 34px; }
+  .phone.placeholder { display: grid; place-items: center; background: #191B30; }
+  .phone.placeholder svg { width: 55%; opacity: .9; }
+  .showcase.swap { animation: swap .35s ease; }
+  @keyframes swap { from { opacity: .3; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .showcase.swap { animation: none; } }
+
+  /* Principles: four promises, one per colour of the mark */
+  #how { background: var(--ink); color: var(--white); padding-top: 24px; }
+  .promises { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; border-top: 1px solid #2E3150; }
+  .promise { padding: 34px 28px 10px 0; }
+  .promise + .promise { padding-left: 28px; border-left: 1px solid #2E3150; }
+  .promise svg { width: 44px; height: 44px; margin-bottom: 18px; }
+  .promise h3 { font-size: 1.35rem; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .promise p { margin: 0; color: #B7BAD3; }
+
+  /* About */
+  #about .about-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 64px; }
+  #about p { font-size: 1.2rem; color: var(--ink-soft); margin: 0 0 20px; max-width: 32em; }
+  #about p.big { font-size: clamp(1.5rem, 2.6vw, 2rem); line-height: 1.25; letter-spacing: -0.02em; color: var(--ink); font-weight: 600; }
+
+  /* Contact */
+  .contact {
+    display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap;
+    background: var(--white); border: 1px solid var(--line); border-radius: var(--radius-l); padding: 48px 56px;
+  }
+  .contact h2 { margin: 0 0 8px; }
+  .contact p { margin: 0; color: var(--ink-soft); font-size: 1.15rem; }
+
+  footer.site { padding: 48px 0 56px; color: var(--ink-soft); font-size: 0.95rem; }
+  footer.site .bar { height: auto; flex-wrap: wrap; gap: 16px; }
+  footer.site nav { display: flex; gap: 22px; }
+  footer.site a { text-decoration: none; }
+  footer.site a:hover { color: var(--ink); text-decoration: underline; }
+
+  /* ---------- Responsive ---------- */
+  @media (max-width: 920px) {
+    .hero-grid, .showcase, #about .about-grid { grid-template-columns: 1fr; }
+    .ring-stage { max-width: 420px; margin: 8px auto 0; }
+    .showcase { padding: 32px 24px; gap: 40px; }
+    .phone { width: min(250px, 80%); }
+    .promises { grid-template-columns: 1fr 1fr; }
+    .promise:nth-child(3) { border-left: 0; padding-left: 0; }
+    .promise:nth-child(n+3) { border-top: 1px solid #2E3150; }
+  }
+  @media (max-width: 600px) {
+    .hero { padding: 40px 0 72px; }
+    nav.main > a.hide-sm { display: none; }
+    section.block { padding: 80px 0; }
+    #apps { border-radius: 30px 30px 0 0; }
+    .picker, .picker-btn { width: 100%; min-width: 0; }
+    .show-head h3 { font-size: 2.1rem; }
+    .promises { grid-template-columns: 1fr; }
+    .promise, .promise + .promise { padding: 26px 0 6px; border-left: 0; }
+    .promise + .promise { border-top: 1px solid #2E3150; }
+    .contact { padding: 32px 24px; }
+    .apps-panel { width: min(320px, calc(100vw - 32px)); right: -60px; }
+    .arc-label { font-size: 0.85rem; }
+    .ring-stage svg { padding: 26px 0; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site" id="top">
+  <div class="wrap bar">
+    <a class="brand" href="#top" aria-label="Omnivo home">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><g fill="none" stroke-width="13" stroke-linecap="round"><path d="M56 19a32 32 0 0 1 25 25" stroke="#7C5CFF"/><path d="M81 56a32 32 0 0 1-25 25" stroke="#3B82F6"/><path d="M44 81a32 32 0 0 1-25-25" stroke="#14B8A6"/><path d="M19 44a32 32 0 0 1 25-25" stroke="#FF6B4A"/></g><circle cx="50" cy="50" r="7" fill="#17192E"/></svg>
+      Omnivo
+    </a>
+    <nav class="main" aria-label="Main">
+      <div class="apps-menu">
+        <button class="apps-toggle" aria-expanded="false" aria-controls="apps-panel">
+          Apps
+          <svg viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="apps-panel" id="apps-panel">
+          <a href="https://forgetracker1.github.io/">
+            <img src="https://forgetracker1.github.io/icon.png" alt="" width="44" height="44">
+            <span><strong>Forge</strong><small>Free workout tracker for iPhone and Apple Watch</small></span>
+          </a>
+          <div class="soon"><span class="slot-icon" aria-hidden="true"></span><span><strong>Next app</strong><small>In the workshop now</small></span></div>
+        </div>
+      </div>
+      <a href="#about" class="hide-sm">About</a>
+      <a href="#contact">Contact</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <h1><span class="line">One studio.</span><span class="line">Every kind</span><span class="line">of app.</span></h1>
+        <p class="lede">Omnivo makes simple, honest apps for iPhone and Apple Watch. Each one does a job well, respects your privacy, and stays easy to use.</p>
+        <div class="actions">
+          <a class="btn solid" href="#apps">See our apps</a>
+          <a class="btn ghost" href="https://forgetracker1.github.io/">Meet Forge</a>
+        </div>
+      </div>
+
+      <div class="ring-stage">
+        <svg viewBox="0 0 400 400" role="img" aria-labelledby="ring-title">
+          <title id="ring-title">The Omnivo mark: four arcs, one for each app slot. Forge fills the first.</title>
+          <!-- r=150 circle; each quarter minus a gap. Path length ≈ 204. -->
+          <path class="arc" data-app="forge" tabindex="0" role="button" aria-label="Show Forge" stroke="#FF6B4A" d="M 50.8 184.3 A 150 150 0 0 1 184.3 50.8"/>
+          <path class="arc empty" data-app="next" tabindex="0" role="button" aria-label="Show what's next" stroke="#7C5CFF" d="M 215.7 50.8 A 150 150 0 0 1 349.2 184.3"/>
+          <path class="arc empty" data-app="next" tabindex="0" role="button" aria-label="Show what's next" stroke="#3B82F6" d="M 349.2 215.7 A 150 150 0 0 1 215.7 349.2"/>
+          <path class="arc empty" data-app="next" tabindex="0" role="button" aria-label="Show what's next" stroke="#14B8A6" d="M 184.3 349.2 A 150 150 0 0 1 50.8 215.7"/>
+          <circle class="ring-core" cx="200" cy="200" r="22"/>
+        </svg>
+        <div class="arc-label l-coral"><span class="dot" style="background:#FF6B4A"></span>Forge<small>Fitness, coming soon</small></div>
+        <div class="arc-label l-violet">Next app<span class="dot" style="background:#7C5CFF;margin:0 0 0 7px"></span><small>In the workshop</small></div>
+        <div class="arc-label l-blue">Open slot<span class="dot" style="background:#3B82F6;margin:0 0 0 7px"></span><small>Your idea here?</small></div>
+        <div class="arc-label l-teal"><span class="dot" style="background:#14B8A6"></span>Open slot<small>Coming later</small></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="apps" aria-labelledby="apps-title">
+    <div class="wrap">
+      <h2 id="apps-title">Pick an app</h2>
+      <p class="intro">Choose one to see what it does, then head to its site to get it.</p>
+
+      <div class="picker">
+        <button class="picker-btn" id="picker-btn" aria-haspopup="listbox" aria-expanded="false" aria-controls="picker-list" aria-labelledby="picker-label picker-btn">
+          <span id="picker-current"></span>
+          <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <span id="picker-label" class="sr-only">Choose an app</span>
+        <ul class="picker-list" id="picker-list" role="listbox" tabindex="-1" aria-labelledby="picker-label" hidden></ul>
+      </div>
+
+      <div class="showcase" id="showcase" aria-live="polite"></div>
+    </div>
+  </section>
+
+  <section class="block" id="how" aria-labelledby="how-title">
+    <div class="wrap">
+      <h2 id="how-title">What every Omnivo app promises</h2>
+      <p class="intro" style="color:#B7BAD3">Four colours in the mark, four rules we build by.</p>
+      <div class="promises">
+        <div class="promise">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M7 21a15 15 0 0 1 14-14" stroke="#FF6B4A"/><path d="M23 7a15 15 0 0 1 14 14" stroke="#7C5CFF" opacity=".22"/><path d="M37 23a15 15 0 0 1-14 14" stroke="#3B82F6" opacity=".22"/><path d="M21 37a15 15 0 0 1-14-14" stroke="#14B8A6" opacity=".22"/></g></svg>
+          <h3>Free where it can be</h3>
+          <p>The core of every app is free to use. The basics never sit behind a paywall.</p>
+        </div>
+        <div class="promise">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M7 21a15 15 0 0 1 14-14" stroke="#FF6B4A" opacity=".22"/><path d="M23 7a15 15 0 0 1 14 14" stroke="#7C5CFF"/><path d="M37 23a15 15 0 0 1-14 14" stroke="#3B82F6" opacity=".22"/><path d="M21 37a15 15 0 0 1-14-14" stroke="#14B8A6" opacity=".22"/></g></svg>
+          <h3>Private by default</h3>
+          <p>Your data stays on your device. No account needed to get started.</p>
+        </div>
+        <div class="promise">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M7 21a15 15 0 0 1 14-14" stroke="#FF6B4A" opacity=".22"/><path d="M23 7a15 15 0 0 1 14 14" stroke="#7C5CFF" opacity=".22"/><path d="M37 23a15 15 0 0 1-14 14" stroke="#3B82F6"/><path d="M21 37a15 15 0 0 1-14-14" stroke="#14B8A6" opacity=".22"/></g></svg>
+          <h3>Made for Apple</h3>
+          <p>Built natively for iPhone and Apple Watch, with dark mode and large text.</p>
+        </div>
+        <div class="promise">
+          <svg viewBox="0 0 44 44" aria-hidden="true"><g fill="none" stroke-width="5" stroke-linecap="round"><path d="M7 21a15 15 0 0 1 14-14" stroke="#FF6B4A" opacity=".22"/><path d="M23 7a15 15 0 0 1 14 14" stroke="#7C5CFF" opacity=".22"/><path d="M37 23a15 15 0 0 1-14 14" stroke="#3B82F6" opacity=".22"/><path d="M21 37a15 15 0 0 1-14-14" stroke="#14B8A6"/></g></svg>
+          <h3>Simple to use</h3>
+          <p>Clear screens, no clutter. You get to what you opened the app for, fast.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="about" aria-labelledby="about-title">
+    <div class="wrap about-grid">
+      <h2 id="about-title">A small studio with a long list</h2>
+      <div>
+        <p class="big">Omnivo means "all" for a reason. We don't stick to one category: if an app would make everyday life a little easier, it's fair game.</p>
+        <p>We started with Forge because gym apps kept hiding simple features behind subscriptions. It logs every set, tracks your progress, and ranks your strength muscle by muscle, all for free.</p>
+        <p>More apps are on the way. Each one gets the same care: tested on every iPhone size, tidy in dark mode, and honest about what it does with your data.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="contact" style="padding-top:0">
+    <div class="wrap">
+      <div class="contact">
+        <div>
+          <h2>Say hello</h2>
+          <p>Questions, feedback, or an app idea you want built? Email us.</p>
+        </div>
+        <a class="btn solid" href="mailto:forgetrackerhelp@gmail.com">Email Omnivo</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site">
+  <div class="wrap bar">
+    <span>© 2026 Omnivo</span>
+    <nav aria-label="Footer">
+      <a href="https://forgetracker1.github.io/">Forge</a>
+      <a href="https://forgetracker1.github.io/privacy.html">Forge privacy policy</a>
+      <a href="mailto:forgetrackerhelp@gmail.com">Contact</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const APPS = [
+    {
+      id: "forge",
+      name: "Forge",
+      kind: "Fitness for iPhone and Apple Watch",
+      accent: "#FF6B4A",
+      icon: "https://forgetracker1.github.io/icon.png",
+      shot: "https://forgetracker1.github.io/workout.jpg",
+      shotAlt: "Forge logging a bench press workout on iPhone",
+      status: "Coming soon to the App Store",
+      desc: "A free workout tracker that logs every set in one tap and shows how you're getting stronger.",
+      facts: [
+        "243 exercises with step-by-step guides and muscle diagrams",
+        "Strength ranks for every muscle, from Iron to Champion",
+        "Rest timer, personal records and progress charts",
+        "Full Apple Watch app, so your phone can stay in your bag"
+      ],
+      url: "https://forgetracker1.github.io/",
+      cta: "Open Forge's site"
+    },
+    {
+      id: "next",
+      name: "What's next",
+      kind: "In the workshop",
+      accent: "#7C5CFF",
+      icon: null,
+      shot: null,
+      status: "In development",
+      desc: "The next Omnivo app is being built now. It won't be a gym app: we go wherever there's something worth fixing.",
+      facts: [
+        "Same promises: free core, private by default, simple to use",
+        "Built for iPhone first",
+        "Have an idea? We read every email"
+      ],
+      url: "mailto:forgetrackerhelp@gmail.com?subject=App%20idea%20for%20Omnivo",
+      cta: "Send us an idea"
+    }
+  ];
+
+  const esc = s => s.replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const iconHTML = (app, size) => app.icon
+    ? `<img src="${app.icon}" alt="" width="${size}" height="${size}">`
+    : `<span class="slot-icon" aria-hidden="true"></span>`;
+
+  // ----- Header: border on scroll -----
+  const header = document.querySelector("header.site");
+  const onScroll = () => header.classList.toggle("scrolled", window.scrollY > 8);
+  window.addEventListener("scroll", onScroll, { passive: true }); onScroll();
+
+  // ----- Header apps dropdown -----
+  const toggle = document.querySelector(".apps-toggle");
+  const panel = document.getElementById("apps-panel");
+  const setMenu = open => { toggle.setAttribute("aria-expanded", open); panel.classList.toggle("open", open); };
+  toggle.addEventListener("click", e => { e.stopPropagation(); setMenu(toggle.getAttribute("aria-expanded") !== "true"); });
+  document.addEventListener("click", e => { if (!panel.contains(e.target)) setMenu(false); });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && panel.classList.contains("open")) { setMenu(false); toggle.focus(); } });
+
+  // ----- App picker (listbox) -----
+  const btn = document.getElementById("picker-btn");
+  const list = document.getElementById("picker-list");
+  const current = document.getElementById("picker-current");
+  const showcase = document.getElementById("showcase");
+  let selected = 0, active = 0;
+
+  list.innerHTML = APPS.map((app, i) =>
+    `<li role="option" id="opt-${app.id}" data-index="${i}" aria-selected="${i === 0}">
+       ${iconHTML(app, 40)}<span><strong>${esc(app.name)}</strong><small>${esc(app.kind)}</small></span>
+     </li>`).join("");
+  const options = [...list.querySelectorAll("li")];
+
+  function render(i, animate) {
+    const app = APPS[i];
+    selected = i;
+    options.forEach((o, k) => o.setAttribute("aria-selected", k === i));
+    current.innerHTML = `<span style="display:flex;align-items:center;gap:14px">${iconHTML(app, 48)}<span><strong>${esc(app.name)}</strong><small>${esc(app.kind)}</small></span></span>`;
+    const external = app.url.startsWith("http");
+    showcase.style.setProperty("--accent", app.accent);
+    showcase.innerHTML = `
+      <div class="show-copy">
+        <div class="show-head">${app.icon ? `<img src="${app.icon}" alt="" width="76" height="76">` : ""}
+          <div><h3>${esc(app.name)}</h3><p>${esc(app.kind)}</p></div></div>
+        <span class="status">${esc(app.status)}</span>
+        <p class="desc">${esc(app.desc)}</p>
+        <ul class="facts">${app.facts.map(f => `<li>${esc(f)}</li>`).join("")}</ul>
+        <div class="actions">
+          <a class="btn solid" href="${app.url}"${external ? "" : ""}>${esc(app.cta)}</a>
+        </div>
+      </div>
+      ${app.shot
+        ? `<div class="phone"><img src="${app.shot}" alt="${esc(app.shotAlt)}" loading="lazy"></div>`
+        : `<div class="phone placeholder" aria-hidden="true"><svg viewBox="0 0 100 100"><g fill="none" stroke-width="9" stroke-linecap="round"><path d="M56 19a32 32 0 0 1 25 25" stroke="#7C5CFF"/><path d="M81 56a32 32 0 0 1-25 25" stroke="#3B82F6" opacity=".35"/><path d="M44 81a32 32 0 0 1-25-25" stroke="#14B8A6" opacity=".35"/><path d="M19 44a32 32 0 0 1 25-25" stroke="#FF6B4A" opacity=".35"/></g><circle cx="50" cy="50" r="6" fill="#fff"/></svg></div>`}`;
+    if (animate) { showcase.classList.remove("swap"); void showcase.offsetWidth; showcase.classList.add("swap"); }
+  }
+
+  function setActive(i) {
+    active = (i + options.length) % options.length;
+    options.forEach((o, k) => o.classList.toggle("active", k === active));
+    list.setAttribute("aria-activedescendant", options[active].id);
+  }
+  function openList() { list.hidden = false; btn.setAttribute("aria-expanded", "true"); setActive(selected); list.focus(); }
+  function closeList(focusBtn) { list.hidden = true; btn.setAttribute("aria-expanded", "false"); if (focusBtn) btn.focus(); }
+  function choose(i) { render(i, true); closeList(true); }
+
+  btn.addEventListener("click", () => list.hidden ? openList() : closeList(true));
+  btn.addEventListener("keydown", e => { if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault(); openList(); } });
+  list.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown") { e.preventDefault(); setActive(active + 1); }
+    else if (e.key === "ArrowUp") { e.preventDefault(); setActive(active - 1); }
+    else if (e.key === "Home") { e.preventDefault(); setActive(0); }
+    else if (e.key === "End") { e.preventDefault(); setActive(options.length - 1); }
+    else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); choose(active); }
+    else if (e.key === "Escape" || e.key === "Tab") { closeList(e.key === "Escape"); }
+  });
+  options.forEach((o, i) => {
+    o.addEventListener("click", () => choose(i));
+    o.addEventListener("mousemove", () => setActive(i));
+  });
+  document.addEventListener("click", e => { if (!list.hidden && !list.contains(e.target) && !btn.contains(e.target)) closeList(false); });
+
+  // ----- Ring arcs pick an app and jump to the explorer -----
+  document.querySelectorAll(".arc").forEach(arc => {
+    const go = () => {
+      const i = APPS.findIndex(a => a.id === arc.dataset.app);
+      render(i, true);
+      document.getElementById("apps").scrollIntoView();
+    };
+    arc.addEventListener("click", go);
+    arc.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); go(); } });
+  });
+
+  // Deep links: omnivo.../#forge selects that app
+  const hash = location.hash.slice(1);
+  const start = Math.max(0, APPS.findIndex(a => a.id === hash));
+  render(start, false);
+})();
+</script>
+</body>
+</html>
